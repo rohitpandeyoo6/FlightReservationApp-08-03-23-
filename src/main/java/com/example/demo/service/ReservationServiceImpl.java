@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import com.example.demo.entity.Reservation;
 import com.example.demo.repository.FlightRepository;
 import com.example.demo.repository.PassengerRepository;
 import com.example.demo.repository.ReservationRepository;
+import com.example.demo.utilities.PDFgenerator;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -25,6 +27,9 @@ public class ReservationServiceImpl implements ReservationService {
 	@Autowired
 	private ReservationRepository reservationRepo;
 	
+	@Autowired
+	private PDFgenerator PDFgenerator;
+	
 	
 	
 	@Override
@@ -34,6 +39,8 @@ public class ReservationServiceImpl implements ReservationService {
 		String middleName = request.getMiddleName();
 		String email = request.getEmail();
 		String phone = request.getPhone();
+		
+		
 		Passenger passenger = new Passenger();
 		passenger.setFirstName(firstName);
 		passenger.setLastName(lastName);
@@ -52,7 +59,12 @@ public class ReservationServiceImpl implements ReservationService {
 		reservation.setPassenger(passenger);
 		reservation.setCheckedIn(false);
 		reservation.setNumberOfBags(0);
+		
+		String filePath ="C:\\Users\\rohit\\eclipse-workspace\\demo\\demo\\tickets\\reservation"+reservation.getId()+".pdf";
+		
 		reservationRepo.save(reservation);
+		
+		PDFgenerator.generateItinerary(reservation, filePath);
 		
 		return reservation;
 	}
