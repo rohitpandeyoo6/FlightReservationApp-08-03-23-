@@ -13,6 +13,7 @@ import com.example.demo.entity.Reservation;
 import com.example.demo.repository.FlightRepository;
 import com.example.demo.repository.PassengerRepository;
 import com.example.demo.repository.ReservationRepository;
+import com.example.demo.utilities.EmailUtil;
 import com.example.demo.utilities.PDFgenerator;
 
 @Service
@@ -29,6 +30,9 @@ public class ReservationServiceImpl implements ReservationService {
 	
 	@Autowired
 	private PDFgenerator PDFgenerator;
+	
+	@Autowired
+	private EmailUtil emailUtil;
 	
 	
 	
@@ -65,6 +69,7 @@ public class ReservationServiceImpl implements ReservationService {
 		reservationRepo.save(reservation);
 		
 		PDFgenerator.generateItinerary(reservation, filePath);
+		emailUtil.sendItinerary(passenger.getEmail(), filePath);
 		
 		return reservation;
 	}
